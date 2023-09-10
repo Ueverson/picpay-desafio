@@ -1,6 +1,5 @@
 package com.br.desafiopicpay.service;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -43,7 +42,7 @@ public class TransactionService {
 
 		userService.validateTransaction(sender, transactionDTO.value());
 
-		if (!authorizeTransaction(sender, transactionDTO.value())) {
+		if (!authorizeTransaction()) {
 			throw new UnauthorizedTransactionException("Transaction was not authorized");
 		}
 
@@ -61,7 +60,7 @@ public class TransactionService {
 				.save(new Transaction(null, transactionDTO.value(), sender, receiver, LocalDateTime.now()));
 	}
 
-	public boolean authorizeTransaction(User sender, BigDecimal value) {
+	public boolean authorizeTransaction() {
 		ResponseEntity<Map> authorizationResponse = restTemplate.getForEntity(urlAuthorizer, Map.class);
 
 		if (HttpStatus.OK.equals(authorizationResponse.getStatusCode())) {
